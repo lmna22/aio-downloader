@@ -1,6 +1,6 @@
 {
     "name": "@lmna22/aio-downloader",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, and X/Twitter. Scrape and download videos, audio, and images from multiple platforms with a single library.",
     "main": "src/index.js",
     "scripts": {
