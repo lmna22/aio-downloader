@@ -1,4 +1,3 @@
-scrape/
 .gitignore
 debug-*.html
 *-results.json
