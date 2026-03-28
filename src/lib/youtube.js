@@ -33,6 +33,7 @@ async function youtubeDownloader(link, qualityIndex) {
     if (!youtubedl) {
         return {
             status: false,
+            platform: "youtube",
             message: `youtube-dl-exec not found, can't download video`,
         };
     }

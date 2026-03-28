@@ -59,14 +59,31 @@ async function getTokens(tweetUrl) {
     }
 
     const { data: redirectPageData } = await axios.get(tweetUrl, { headers: DEFAULT_HEADERS });
-    const mainJsUrlMatch = redirectPageData.match(/https:\/\/abs.twimg.com\/responsive-web\/client-web-legacy\/main\.[^\.]+\.js/);
 
-    if (!mainJsUrlMatch) {
-        throw new Error('Failed to find main JS URL.');
+    // Try multiple patterns for the main JS bundle URL
+    const mainJsPatterns = [
+        /https:\/\/abs\.twimg\.com\/responsive-web\/client-web-legacy\/main\.[^\.]+\.js/,
+        /https:\/\/abs\.twimg\.com\/responsive-web\/client-web\/main\.[^\.]+\.js/,
+        /https:\/\/abs\.twimg\.com\/responsive-web\/[^\/]+\/main\.[^"'\s]+\.js/,
+    ];
+
+    let bearerToken = null;
+
+    for (const pattern of mainJsPatterns) {
+        const match = redirectPageData.match(pattern);
+        if (match) {
+            try {
+                bearerToken = await extractBearerToken(match[0]);
+                break;
+            } catch { }
+        }
     }
 
-    const mainJsUrl = mainJsUrlMatch[0];
-    const bearerToken = await extractBearerToken(mainJsUrl);
+    // Fallback: use the well-known public guest bearer token
+    if (!bearerToken) {
+        bearerToken = 'AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA';
+    }
+
     const guestToken = await getGuestToken(redirectPageData);
     const tokens = { bearer: bearerToken, guest: guestToken };
     tokenCache.set(tweetUrl, tokens);

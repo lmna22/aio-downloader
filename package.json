@@ -4,7 +4,7 @@
     "description": "All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, and X/Twitter. Scrape and download videos, audio, and images from multiple platforms with a single library.",
     "main": "src/index.js",
     "scripts": {
-        "test": "node -e \"const aio = require('./src/index.js'); console.log('Exports:', Object.keys(aio)); console.log('Platform detection:', aio.detectPlatform('https://youtube.com/watch?v=test'));\""
+        "test": "node -e \"const { lmna, detectPlatform } = require('./src/index.js'); console.log('lmna methods:', Object.keys(lmna)); console.log('Platform detection:', detectPlatform('https://youtube.com/watch?v=test'));\""
     },
     "keywords": [
         "downloader",

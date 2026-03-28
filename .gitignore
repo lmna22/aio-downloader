@@ -1,6 +1,6 @@
-node_modules/
-downloads/
-pixiv/
+.npmignore
 debug-*.html
 *-results.json
 *.log
+node_modules/
+test.js

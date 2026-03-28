@@ -2,3 +2,4 @@
 debug-*.html
 *-results.json
 *.log
+test.js
