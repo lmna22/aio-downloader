@@ -53,11 +53,11 @@ npm install puppeteer
 ```javascript
 const { lmna, aioDownloader } = require("@lmna22/aio-downloader");
 
-// Using the lmna namespace (recommended)
+// Recommended: use the lmna namespace
 const result = await lmna.youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ", 5);
 console.log(result);
 
-// Or auto-detect platform from URL
+// Unified: auto-detect platform from URL
 const result2 = await aioDownloader("https://www.instagram.com/p/ABC123/");
 console.log(result2);
 ```
@@ -71,208 +71,31 @@ console.log(result2);
 ```javascript
 const { lmna } = require("@lmna22/aio-downloader");
 
-// Quality options:
-// 1 = 144p, 2 = 360p, 3 = 480p, 4 = 720p,
-// 5 = 1080p, 6 = 1440p, 7 = 2160p,
-// 8 = Audio only (MP3), 9 = Get bitrate list
-
-// Download a video in 1080p
+// Quality: 1=144p, 2=360p, 5=1080p, 8=MP3, 9=bitrate list
 const result = await lmna.youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ", 5);
 
 if (result.status) {
-    console.log(result.data.title);      // "Rick Astley - Never Gonna Give You Up"
-    console.log(result.data.channel);    // "Rick Astley"
-    console.log(result.data.views);      // 1500000000
-    console.log(result.data.size);       // Buffer size in bytes
-    console.log(result.data.type);       // "mp4" or "mp3"
-
-    // Save to file
+    console.log(result.data.title);
     const fs = require("fs");
     fs.writeFileSync(`${result.data.title}.${result.data.type}`, result.data.result);
 }
-
-// Download audio only
-const audio = await lmna.youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ", 8);
-
-// Get available audio bitrates
-const bitrates = await lmna.youtube("https://www.youtube.com/watch?v=dQw4w9WgXcQ", 9);
-console.log(bitrates.data.bitrateList);
-
-// Download entire playlist
-const playlist = await lmna.youtubePlaylist(
-    "https://www.youtube.com/playlist?list=PLrAXtmErZgOeiKm4sgNOknGvNjby9efdf",
-    5, // quality
-    "./my-playlist" // output folder
-);
 ```
 
 ### Instagram
 
 ```javascript
 const { lmna } = require("@lmna22/aio-downloader");
-
 const result = await lmna.instagram("https://www.instagram.com/p/ABC123/");
-
-if (result.status) {
-    console.log(result.data.url);        // Array of download URLs
-    console.log(result.data.caption);    // Post caption
-    console.log(result.data.username);   // "@username"
-    console.log(result.data.like);       // Like count
-    console.log(result.data.comment);    // Comment count
-    console.log(result.data.isVideo);    // true/false
-
-    // Download all media
-    const { download } = require("@lmna22/aio-downloader");
-    for (let i = 0; i < result.data.url.length; i++) {
-        await download(result.data.url[i], `./downloads/ig_${i + 1}.mp4`);
-    }
-}
 ```
 
 ### TikTok
 
 ```javascript
 const { lmna } = require("@lmna22/aio-downloader");
-
 const result = await lmna.tiktok("https://www.tiktok.com/@user/video/1234567890");
-
-if (result.status) {
-    const data = result.data;
-
-    console.log(data.description);       // Video description
-    console.log(data.author.nickname);   // Author name
-    console.log(data.author.uniqueId);   // @username
-    console.log(data.stats.likes);       // Like count
-    console.log(data.stats.comments);    // Comment count
-    console.log(data.stats.plays);       // Play count
-    console.log(data.music.title);       // Music title
-    console.log(data.videoInfo.duration); // Duration in seconds
-    console.log(data.videoInfo.width);    // Video width
-    console.log(data.videoInfo.height);   // Video height
-
-    // Video is returned as a Buffer — save directly
-    if (data.videoBuffer) {
-        const fs = require("fs");
-        fs.writeFileSync("tiktok_video.mp4", data.videoBuffer);
-    }
-
-    // For photo/slide posts
-    if (data.images) {
-        console.log(data.images); // Array of image URLs
-    }
-}
 ```
 
-### Pinterest
-
-```javascript
-const { lmna } = require("@lmna22/aio-downloader");
-
-// From a direct pin URL
-const data = await lmna.pinterest("https://www.pinterest.com/pin/123456789/");
-
-// Or search by keyword
-const searchResults = await lmna.pinterest("aesthetic wallpaper", { limit: 20 });
-
-console.log(data.results);
-// [
-//   {
-//     id: "123456789",
-//     title: "Beautiful Wallpaper",
-//     link: "https://www.pinterest.com/pin/123456789/",
-//     image: "https://i.pinimg.com/originals/...",
-//     source: "example.com"
-//   }
-// ]
-```
-
-### Pixiv
-
-```javascript
-const { lmna } = require("@lmna22/aio-downloader");
-
-// From an artwork URL
-const data = await lmna.pixiv("https://www.pixiv.net/artworks/12345678");
-
-// Or search by tag/keyword
-const searchResults = await lmna.pixiv("landscape", { limit: 5 });
-
-console.log(data.results);
-// [
-//   {
-//     id: "12345678",
-//     title: "Beautiful Landscape",
-//     link: "https://www.pixiv.net/artworks/12345678",
-//     image: "https://i.pximg.net/img-original/...",
-//     artist: "ArtistName",
-//     artistUrl: "https://www.pixiv.net/users/999",
-//     userId: "999",
-//     images: ["https://i.pximg.net/img-original/..."]
-//   }
-// ]
-
-// Skip enrichment for faster results (no original resolution images)
-const fast = await lmna.pixiv("landscape", { limit: 10, enrich: false });
-```
-
-### X / Twitter
-
-```javascript
-const { lmna } = require("@lmna22/aio-downloader");
-
-const result = await lmna.twitter("https://x.com/user/status/1234567890");
-
-if (result.status) {
-    console.log(result.data.author);          // "username"
-    console.log(result.data.description);     // Tweet text
-    console.log(result.data.like);            // Like count
-    console.log(result.data.view);            // View count
-    console.log(result.data.retweet);         // Retweet count
-    console.log(result.data.sensitiveContent); // true/false
-
-    // result.data.result contains media items:
-    // [
-    //   { type: "video", thumb: "https://...", url: "https://..." },
-    //   { type: "image", url: "https://...?format=png&name=large" },
-    //   { type: "gif", thumb: "https://...", url: "https://..." }
-    // ]
-
-    // Download all media
-    const { download } = require("@lmna22/aio-downloader");
-    for (let i = 0; i < result.data.result.length; i++) {
-        const media = result.data.result[i];
-        const ext = media.type === "image" ? ".png" : ".mp4";
-        await download(media.url, `./downloads/tweet_${i + 1}${ext}`);
-    }
-}
-```
-
-### Lahelu
-
-```javascript
-const { lmna } = require("@lmna22/aio-downloader");
-
-const result = await lmna.lahelu("https://lahelu.com/post/abc123");
-
-if (result.status) {
-    const data = result.data;
-
-    console.log(data.title);           // Post title
-    console.log(data.author);          // Username
-    console.log(data.createdAt);       // Creation date
-    console.log(data.stats.views);     // View count
-    console.log(data.stats.likes);     // Like count
-    console.log(data.stats.comments);  // Comment count
-    console.log(data.media.type);      // "video" or "image"
-    console.log(data.media.format);    // File format (mp4, jpg, etc.)
-    console.log(data.media.url);       // Direct download URL
-    console.log(data.fileName);        // Suggested filename
-
-    // Download the media
-    const { download } = require("@lmna22/aio-downloader");
-    await download(data.media.url, `./downloads/${data.fileName}`);
-}
-```
+*(See the API Reference below for other platforms: Pinterest, Pixiv, Twitter, Lahelu)*
 
 ---
 
@@ -329,7 +152,9 @@ detectPlatform("https://unknown.com");               // null
 
 ## 📚 API Reference
 
-### `lmna` Namespace (Recommended)
+### `lmna` Namespace (Mandatory for individual scrapers)
+
+Instead of individual function exports, all scrapers are now grouped under the `lmna` object:
 
 ```javascript
 const { lmna } = require("@lmna22/aio-downloader");
@@ -338,8 +163,8 @@ await lmna.youtube(url, quality);
 await lmna.youtubePlaylist(url, quality, folderPath);
 await lmna.instagram(url);
 await lmna.tiktok(url);
-await lmna.pinterest(input, options);
-await lmna.pixiv(input, options);
+await lmna.pinterest(url, options);
+await lmna.pixiv(url, options);
 await lmna.twitter(url);
 await lmna.lahelu(url);
 ```
@@ -358,137 +183,29 @@ Auto-detect platform and scrape media data.
 
 ---
 
-### `lmna.youtube(url, quality)`
-
-| Parameter | Type | Description |
-|---|---|---|
-| `url` | `string` | YouTube video URL |
-| `quality` | `number` | 1=144p, 2=360p, 3=480p, 4=720p, 5=1080p, 6=1440p, 7=2160p, 8=MP3, 9=bitrate list |
-
-**Returns:** `{ status, platform, data: { title, result (Buffer), size, quality, desc, views, likes, channel, uploadDate, thumb, type } }`
-
----
-
-### `lmna.youtubePlaylist(url, quality, folderPath?)`
-
-Downloads all videos from a YouTube playlist.
-
-**Returns:** `{ status, platform, data: { title, resultPath[], metadata[] } }`
-
----
-
-### `lmna.instagram(url)`
-
-Uses 4 fallback methods for maximum reliability.
-
-**Returns:** `{ status, platform, data: { url[], caption, username, like, comment, isVideo } }`
-
----
-
-### `lmna.tiktok(url)`
-
-Returns video as a Buffer (no watermark). Uses direct scraping with tikwm.com API fallback.
-
-**Returns:** `{ status, platform, data: { videoId, description, videoUrl, videoBuffer (Buffer), videoInfo, author, music, stats, locationCreated, images? } }`
-
----
-
-### `lmna.pinterest(input, options?)`
-
-| Parameter | Type | Description |
-|---|---|---|
-| `input` | `string` | Pin URL or search keyword |
-| `options.limit` | `number` | Max results for search (default: 10) |
-
-**Returns:** `{ status, platform, method, total, results: [{ id, title, link, image, source }] }`
-
----
-
-### `lmna.pixiv(input, options?)`
-
-| Parameter | Type | Description |
-|---|---|---|
-| `input` | `string` | Artwork URL or search keyword |
-| `options.limit` | `number` | Max results (default: 10) |
-| `options.enrich` | `boolean` | Fetch original resolution images (default: true) |
-
-**Returns:** `{ status, platform, method, total, results: [{ id, title, link, image, artist, artistUrl, userId, images[] }] }`
-
----
-
-### `lmna.twitter(url)`
-
-Extracts best quality video/image/gif from tweets via Twitter GraphQL API.
-
-**Returns:** `{ status, platform, data: { author, like, view, retweet, description, sensitiveContent, result: [{ type, url, thumb? }] } }`
-
----
-
-### `lmna.lahelu(url)`
-
-Scrapes video or image from Lahelu posts.
-
-**Returns:** `{ status, platform, data: { postId, title, author, createdAt, stats: { views, likes, comments }, media: { type, format, url, desc }, fileName } }`
-
----
-
-### `download(url, outputPath, options?)`
-
-Helper to download any file to disk.
-
-| Parameter | Type | Description |
-|---|---|---|
-| `url` | `string` | Direct download URL |
-| `outputPath` | `string` | Local file path |
-| `options.headers` | `object` | Custom request headers |
-| `options.timeout` | `number` | Timeout in ms (default: 120000) |
-| `options.onProgress` | `function` | `({ downloaded, total, percentage })` |
-
-**Returns:** `{ path, size, filename }`
-
----
-
-### `detectPlatform(url)`
-
-**Returns:** `"youtube"` | `"instagram"` | `"tiktok"` | `"pinterest"` | `"pixiv"` | `"twitter"` | `"lahelu"` | `null`
-
----
-
-## 🔄 Migration from v1.0.x
-
-If you're upgrading from the old API, the legacy named exports still work:
+### Utility Exports
 
 ```javascript
-// Old way (still works)
-const { tiktokDownloader } = require("@lmna22/aio-downloader");
-await tiktokDownloader(url);
-
-// New way (recommended)
-const { lmna } = require("@lmna22/aio-downloader");
-await lmna.tiktok(url);
+const { detectPlatform, download } = require("@lmna22/aio-downloader");
 ```
+
+| Function | Description |
+|---|---|
+| `detectPlatform(url)` | Returns the platform name from URL |
+| `download(url, path, options)` | Helper to download files to disk |
 
 ---
 
 ## ⚠️ Error Handling
 
-All functions return `{ status: false, platform: "...", message: "..." }` on failure:
-
-```javascript
-const { lmna } = require("@lmna22/aio-downloader");
-
-const result = await lmna.youtube("https://www.youtube.com/watch?v=invalid", 5);
-if (!result.status) {
-    console.error("Failed:", result.message);
-}
-```
+All functions return `{ status: false, platform: "...", message: "..." }` on failure.
 
 ---
 
 ## 📋 Requirements
 
 - **Node.js** >= 14.0.0
-- **puppeteer** (optional) — fallback for Pinterest/Pixiv when axios scraping is blocked
+- **puppeteer** (optional) — fallback for Pinterest/Pixiv
 
 ---
 

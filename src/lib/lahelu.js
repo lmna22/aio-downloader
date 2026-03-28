@@ -25,22 +25,18 @@ function extractPostId(url) {
 }
 
 async function fetchLaheluData(postId) {
-    for (let page = 1; page <= 10; page++) {
-        const apiUrl = `https://lahelu.com/api/post/get-posts?feed=1&page=${page}`;
+    const apiUrl = `https://lahelu.com/api/post/get?postID=${postId}`;
 
-        const res = await axios.get(apiUrl, {
-            headers: {
-                "User-Agent": DEFAULT_UA,
-                "Referer": "https://lahelu.com/",
-            },
-            timeout: 15000,
-        });
+    const res = await axios.get(apiUrl, {
+        headers: {
+            "User-Agent": DEFAULT_UA,
+            "Referer": "https://lahelu.com/",
+        },
+        timeout: 15000,
+    });
 
-        if (res.data && res.data.postInfos && Array.isArray(res.data.postInfos)) {
-            const post = res.data.postInfos.find(p => p.postId === postId || p.postID === postId);
-            if (post) return post;
-            if (!res.data.hasMore) break;
-        }
+    if (res.data && res.data.postInfo) {
+        return res.data.postInfo;
     }
     return null;
 }
@@ -49,36 +45,35 @@ function normalizeMedia(post) {
     const CACHE_URL = "https://cache.lahelu.com/";
     const medias = [];
 
-    if (post.mediaType === "video" || post.type === "video") {
-        const videoUrl = post.media?.startsWith("http") ? post.media : CACHE_URL + post.media;
+    if (post.media) {
+        const mediaUrl = post.media.startsWith("http") ? post.media : CACHE_URL + post.media;
+        const isVideo = mediaUrl.match(/\.(mp4|webm|mov)(\?.*)?$/i) || post.mediaType === 1 || post.type === 1;
+        const format = isVideo ? "mp4" : getExtFromUrl(mediaUrl, ".jpg");
+
         medias.push({
-            type: "video",
-            format: "mp4",
-            url: videoUrl,
-            desc: "Video",
-        });
-    } else if (post.mediaType === "image" || post.type === "image") {
-        const imageUrl = post.media?.startsWith("http") ? post.media : CACHE_URL + post.media;
-        medias.push({
-            type: "image",
-            format: getExtFromUrl(imageUrl, ".jpg"),
-            url: imageUrl,
-            desc: "Image",
+            type: isVideo ? "video" : "image",
+            format: format,
+            url: mediaUrl,
+            desc: isVideo ? "Video" : "Image",
         });
     }
 
-    if (post.content && Array.isArray(post.content) && post.content.length > 0) {
-        const firstItem = post.content[0];
-        const mediaUrl = firstItem.value?.startsWith("http") ? firstItem.value : CACHE_URL + firstItem.value;
-        const isVideo = firstItem.type === "video" || (firstItem.value && firstItem.value.match(/\.(mp4|webm|mov)(\?.*)?$/i));
-        const mediaType = isVideo ? "video" : "image";
-        const format = mediaType === "video" ? "mp4" : getExtFromUrl(mediaUrl, ".jpg");
+    if (post.content && Array.isArray(post.content)) {
+        post.content.forEach((item) => {
+            if (!item.value) return;
 
-        medias.push({
-            type: mediaType,
-            format: format,
-            url: mediaUrl,
-            desc: mediaType === "video" ? "Video" : "Image",
+            const mediaUrl = item.value.startsWith("http") ? item.value : CACHE_URL + item.value;
+            const isVideo = mediaUrl.match(/\.(mp4|webm|mov)(\?.*)?$/i) || item.type === 1 || item.type === 4;
+            const format = isVideo ? "mp4" : getExtFromUrl(mediaUrl, ".jpg");
+
+            if (medias.some(m => m.url === mediaUrl)) return;
+
+            medias.push({
+                type: isVideo ? "video" : "image",
+                format: format,
+                url: mediaUrl,
+                desc: isVideo ? "Video" : "Image",
+            });
         });
     }
 
@@ -126,7 +121,7 @@ async function laheluDownloader(url) {
 
         const title = post.title || "Untitled";
         const author = post.userUsername || post.userInfo?.username || "Unknown";
-        const createdAt = post.createTime ? new Date(post.createTime * 1000).toLocaleDateString("en-US") : "-";
+        const createdAt = post.createTime ? new Date(post.createTime).toLocaleDateString("en-US") : "-";
         const views = parseInt(post.totalViews || 0, 10);
         const likes = parseInt(post.totalUpvotes || 0, 10);
         const comments = parseInt(post.totalComments || 0, 10);

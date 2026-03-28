@@ -67,13 +67,4 @@ module.exports = {
     aioDownloader,
     detectPlatform,
     download,
-    // Legacy named exports (backward compatible)
-    youtubeDownloader,
-    youtubePlaylistDownloader,
-    instagramDownloader,
-    tiktokDownloader,
-    pinterestDownloader,
-    pixivDownloader,
-    twitterDownloader,
-    laheluDownloader,
 };

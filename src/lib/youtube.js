@@ -34,7 +34,7 @@ async function youtubeDownloader(link, qualityIndex) {
         return {
             status: false,
             platform: "youtube",
-            message: `youtube-dl-exec not found, can't download video`,
+            message: "youtube-dl-exec is not installed. Install it with: npm install youtube-dl-exec",
         };
     }
     try {
