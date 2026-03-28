@@ -26,8 +26,12 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": ""
+        "url": "git+https://github.com/lmna22/aio-downloader.git"
     },
+    "bugs": {
+        "url": "https://github.com/lmna22/aio-downloader/issues"
+    },
+    "homepage": "https://github.com/lmna22/aio-downloader#readme",
     "dependencies": {
         "axios": "^1.7.0",
         "axios-cookiejar-support": "^5.0.0",
