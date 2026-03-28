@@ -1,0 +1,51 @@
+{
+    "name": "@lmna22/aio-downloader",
+    "version": "1.0.2",
+    "description": "All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, and X/Twitter. Scrape and download videos, audio, and images from multiple platforms with a single library.",
+    "main": "src/index.js",
+    "scripts": {
+        "test": "node -e \"const aio = require('./src/index.js'); console.log('Exports:', Object.keys(aio)); console.log('Platform detection:', aio.detectPlatform('https://youtube.com/watch?v=test'));\""
+    },
+    "keywords": [
+        "downloader",
+        "youtube",
+        "instagram",
+        "tiktok",
+        "pinterest",
+        "pixiv",
+        "twitter",
+        "x",
+        "video",
+        "audio",
+        "image",
+        "media",
+        "scraper",
+        "aio"
+    ],
+    "author": "",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": ""
+    },
+    "dependencies": {
+        "axios": "^1.7.0",
+        "axios-cookiejar-support": "^5.0.0",
+        "cheerio": "^1.0.0",
+        "ffmpeg-static": "^5.0.0",
+        "qs": "^6.13.0",
+        "tough-cookie": "^5.1.0",
+        "youtube-dl-exec": "^3.0.0"
+    },
+    "peerDependencies": {
+        "puppeteer": ">=20.0.0"
+    },
+    "peerDependenciesMeta": {
+        "puppeteer": {
+            "optional": true
+        }
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    }
+}
