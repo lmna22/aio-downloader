@@ -1,6 +1,6 @@
 # @lmna22/aio-downloader
 
-> All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, X/Twitter, and Lahelu.
+> All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, X/Twitter, Lahelu, and Xiaohongshu/RedNote.
 
 [![npm version](https://img.shields.io/npm/v/@lmna22/aio-downloader.svg)](https://www.npmjs.com/package/@lmna22/aio-downloader)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -21,6 +21,7 @@ Scrape and download videos, audio, and images from multiple platforms with a sin
 | **Pixiv** | — | — | ✅ (Original Resolution) | ✅ |
 | **X / Twitter** | ✅ (Best quality) | — | ✅ | — |
 | **Lahelu** | ✅ | — | ✅ | — |
+| **Xiaohongshu/RedNote** | ✅ | — | ✅ | — |
 
 - 🔗 **Auto-detect platform** from URL — just pass any supported link
 - 📦 **Programmatic API** — designed for Node.js applications, bots, and scripts
@@ -95,6 +96,27 @@ const { lmna } = require("@lmna22/aio-downloader");
 const result = await lmna.tiktok("https://www.tiktok.com/@user/video/1234567890");
 ```
 
+### Xiaohongshu / RedNote
+
+```javascript
+const { lmna } = require("@lmna22/aio-downloader");
+
+const result = await lmna.xiaohongshu("https://www.xiaohongshu.com/explore/abc123");
+
+if (result.status) {
+    console.log(result.data.title);
+    console.log(result.data.author.nickname);
+    console.log(result.data.stats.likes);
+    console.log(result.data.stats.collects);
+    console.log(result.data.stats.comments);
+    console.log(result.data.media.url);
+    
+    // Download the media
+    const { download } = require("@lmna22/aio-downloader");
+    await download(result.data.media.url, `./downloads/${result.data.fileName}`);
+}
+```
+
 *(See the API Reference below for other platforms: Pinterest, Pixiv, Twitter, Lahelu)*
 
 ---
@@ -132,6 +154,9 @@ await aioDownloader("https://www.pinterest.com/pin/456/");
 await aioDownloader("https://www.pixiv.net/artworks/789");
 await aioDownloader("https://x.com/user/status/101112");
 await aioDownloader("https://lahelu.com/post/abc123");
+await aioDownloader("https://www.xiaohongshu.com/explore/abc123");
+await aioDownloader("https://www.rednote.com/explore/abc123");
+await aioDownloader("https://xhslink.com/abc123");
 
 // Force a specific platform
 await aioDownloader("https://example.com/video", { platform: "youtube", quality: 5 });
@@ -145,6 +170,9 @@ detectPlatform("https://pin.it/abc123");             // "pinterest"
 detectPlatform("https://pixiv.net/artworks/456");    // "pixiv"
 detectPlatform("https://x.com/user/status/789");     // "twitter"
 detectPlatform("https://lahelu.com/post/abc");       // "lahelu"
+detectPlatform("https://xiaohongshu.com/explore/abc"); // "xiaohongshu"
+detectPlatform("https://rednote.com/explore/abc");   // "xiaohongshu"
+detectPlatform("https://xhslink.com/abc");           // "xiaohongshu"
 detectPlatform("https://unknown.com");               // null
 ```
 
@@ -167,6 +195,9 @@ await lmna.pinterest(url, options);
 await lmna.pixiv(url, options);
 await lmna.twitter(url);
 await lmna.lahelu(url);
+await lmna.xiaohongshu(url);
+
+// All return: { status, platform, data?, message? }
 ```
 
 ---

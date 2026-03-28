@@ -5,6 +5,7 @@ const pinterestDownloader = require("./lib/pinterest");
 const pixivDownloader = require("./lib/pixiv");
 const twitterDownloader = require("./lib/twitter");
 const laheluDownloader = require("./lib/lahelu");
+const xiaohongshuDownloader = require("./lib/xiaohongshu");
 const download = require("./download");
 
 const PLATFORM_PATTERNS = [
@@ -15,6 +16,7 @@ const PLATFORM_PATTERNS = [
     { name: "pixiv", test: (url) => /pixiv\.net\//i.test(url) },
     { name: "twitter", test: (url) => /(?:twitter\.com\/|x\.com\/)/i.test(url) },
     { name: "lahelu", test: (url) => /lahelu\.com\/post\//i.test(url) },
+    { name: "xiaohongshu", test: (url) => /xiaohongshu\.com|rednote\.com|xhslink\.com/i.test(url) },
 ];
 
 function detectPlatform(url) {
@@ -32,6 +34,7 @@ const scrapers = {
     pixiv: (url, options) => pixivDownloader(url, options),
     twitter: (url) => twitterDownloader(url),
     lahelu: (url) => laheluDownloader(url),
+    xiaohongshu: (url) => xiaohongshuDownloader(url),
 };
 
 async function aioDownloader(url, options = {}) {
@@ -60,6 +63,7 @@ const lmna = {
     pixiv: (url, options) => pixivDownloader(url, options),
     twitter: (url) => twitterDownloader(url),
     lahelu: (url) => laheluDownloader(url),
+    xiaohongshu: (url) => xiaohongshuDownloader(url),
 };
 
 module.exports = {
