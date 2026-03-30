@@ -1,6 +1,6 @@
 # @lmna22/aio-downloader
 
-> All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, X (Twitter), Lahelu, Xiaohongshu (RedNote), Dailymotion, and Spotify.
+> All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, X (Twitter), Lahelu, Xiaohongshu (RedNote), and more.
 
 [![npm version](https://img.shields.io/npm/v/@lmna22/aio-downloader.svg)](https://www.npmjs.com/package/@lmna22/aio-downloader)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
