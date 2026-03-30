@@ -6,6 +6,8 @@ const pixivDownloader = require("./lib/pixiv");
 const twitterDownloader = require("./lib/twitter");
 const laheluDownloader = require("./lib/lahelu");
 const xiaohongshuDownloader = require("./lib/xiaohongshu");
+const dailymotionDownloader = require("./lib/dailymotion");
+const spotifyDownloader = require("./lib/spotify");
 const download = require("./download");
 
 const PLATFORM_PATTERNS = [
@@ -17,6 +19,8 @@ const PLATFORM_PATTERNS = [
     { name: "twitter", test: (url) => /(?:twitter\.com\/|x\.com\/)/i.test(url) },
     { name: "lahelu", test: (url) => /lahelu\.com\/post\//i.test(url) },
     { name: "xiaohongshu", test: (url) => /xiaohongshu\.com|rednote\.com|xhslink\.com/i.test(url) },
+    { name: "dailymotion", test: (url) => /dailymotion\.com\//i.test(url) },
+    { name: "spotify", test: (url) => /open\.spotify\.com\//i.test(url) },
 ];
 
 function detectPlatform(url) {
@@ -35,6 +39,8 @@ const scrapers = {
     twitter: (url) => twitterDownloader(url),
     lahelu: (url) => laheluDownloader(url),
     xiaohongshu: (url) => xiaohongshuDownloader(url),
+    dailymotion: (url, options) => dailymotionDownloader(url, options),
+    spotify: (url, options) => spotifyDownloader(url, options),
 };
 
 async function aioDownloader(url, options = {}) {
@@ -42,7 +48,7 @@ async function aioDownloader(url, options = {}) {
 
     if (!platform) {
         throw new Error(
-            `Unsupported or unrecognized URL: ${url}. Supported platforms: YouTube, Instagram, TikTok, Pinterest, Pixiv, X/Twitter.`
+            `Unsupported or unrecognized URL: ${url}. Supported platforms: YouTube, Instagram, TikTok, Pinterest, Pixiv, X/Twitter, Dailymotion, Spotify.`
         );
     }
 
@@ -64,6 +70,8 @@ const lmna = {
     twitter: (url) => twitterDownloader(url),
     lahelu: (url) => laheluDownloader(url),
     xiaohongshu: (url) => xiaohongshuDownloader(url),
+    dailymotion: (url, options) => dailymotionDownloader(url, options),
+    spotify: (url, options) => spotifyDownloader(url, options),
 };
 
 module.exports = {

@@ -1,6 +1,6 @@
 # @lmna22/aio-downloader
 
-> All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, X/Twitter, Lahelu, and Xiaohongshu/RedNote.
+> All-in-one media downloader for YouTube, Instagram, TikTok, Pinterest, Pixiv, X (Twitter), Lahelu, Xiaohongshu (RedNote), Dailymotion, and Spotify.
 
 [![npm version](https://img.shields.io/npm/v/@lmna22/aio-downloader.svg)](https://www.npmjs.com/package/@lmna22/aio-downloader)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -22,6 +22,8 @@ Scrape and download videos, audio, and images from multiple platforms with a sin
 | **X / Twitter** | ✅ (Best quality) | — | ✅ | — |
 | **Lahelu** | ✅ | — | ✅ | — |
 | **Xiaohongshu/RedNote** | ✅ | — | ✅ | — |
+| **Dailymotion** | ✅ | ✅ | ✅ | ✅ |
+| **Spotify** | — | ✅ (MP3, Opus, WAV) | — | — |
 
 - 🔗 **Auto-detect platform** from URL — just pass any supported link
 - 📦 **Programmatic API** — designed for Node.js applications, bots, and scripts
@@ -110,14 +112,63 @@ if (result.status) {
     console.log(result.data.stats.collects);
     console.log(result.data.stats.comments);
     console.log(result.data.media.url);
-    
+
     // Download the media
     const { download } = require("@lmna22/aio-downloader");
     await download(result.data.media.url, `./downloads/${result.data.fileName}`);
 }
 ```
 
-*(See the API Reference below for other platforms: Pinterest, Pixiv, Twitter, Lahelu)*
+### Dailymotion
+
+```javascript
+const { lmna } = require("@lmna22/aio-downloader");
+
+// Download video
+const result = await lmna.dailymotion("https://www.dailymotion.com/video/x8z3v2y");
+
+if (result.status) {
+    console.log(result.data.title);
+    console.log(result.data.author);
+    console.log(result.data.views);
+    console.log(result.data.url);
+}
+
+// Search videos
+const searchResult = await lmna.dailymotion("https://www.dailymotion.com/search/programming", { query: "programming", limit: 10 });
+
+if (searchResult.status) {
+    console.log(searchResult.data.videos);
+}
+```
+
+### Spotify
+
+```javascript
+const { lmna } = require("@lmna22/aio-downloader");
+
+// Get track metadata (returns search query, does not download)
+const result = await lmna.spotify("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT");
+
+if (result.status) {
+    console.log(result.data.title);
+    console.log(result.data.artist);
+    console.log(result.data.cover);
+    console.log(result.data.searchQuery); // Use this to download with yt-dlp
+    
+    // Download using yt-dlp or similar tool
+    // Example: yt-dlp "ytsearch1:Never Gonna Give You Up audio" --extract-audio --audio-format mp3
+}
+
+// Supported formats: mp3, opus, wav
+const mp3Result = await lmna.spotify("https://open.spotify.com/track/abc123", { format: 'mp3' });
+const opusResult = await lmna.spotify("https://open.spotify.com/track/abc123", { format: 'opus' });
+const wavResult = await lmna.spotify("https://open.spotify.com/track/abc123", { format: 'wav' });
+```
+
+**Note:** Spotify scraper returns metadata and a search query. Use yt-dlp or similar tool to download the actual audio file using the provided searchQuery.
+
+*(See the API Reference below for other platforms: Pinterest, Pixiv, Twitter, Lahelu, Dailymotion)*
 
 ---
 
@@ -157,6 +208,9 @@ await aioDownloader("https://lahelu.com/post/abc123");
 await aioDownloader("https://www.xiaohongshu.com/explore/abc123");
 await aioDownloader("https://www.rednote.com/explore/abc123");
 await aioDownloader("https://xhslink.com/abc123");
+await aioDownloader("https://www.dailymotion.com/video/x8z3v2y");
+await aioDownloader("https://www.dailymotion.com/search/programming");
+await aioDownloader("https://open.spotify.com/track/4cOdK2wGLETKBW3PvgPWqT");
 
 // Force a specific platform
 await aioDownloader("https://example.com/video", { platform: "youtube", quality: 5 });
@@ -173,6 +227,9 @@ detectPlatform("https://lahelu.com/post/abc");       // "lahelu"
 detectPlatform("https://xiaohongshu.com/explore/abc"); // "xiaohongshu"
 detectPlatform("https://rednote.com/explore/abc");   // "xiaohongshu"
 detectPlatform("https://xhslink.com/abc");           // "xiaohongshu"
+detectPlatform("https://dailymotion.com/video/x8z3v2y"); // "dailymotion"
+detectPlatform("https://dailymotion.com/search/music"); // "dailymotion"
+detectPlatform("https://open.spotify.com/track/abc123"); // "spotify"
 detectPlatform("https://unknown.com");               // null
 ```
 
@@ -196,6 +253,8 @@ await lmna.pixiv(url, options);
 await lmna.twitter(url);
 await lmna.lahelu(url);
 await lmna.xiaohongshu(url);
+await lmna.dailymotion(url, options);
+await lmna.spotify(url, options);
 
 // All return: { status, platform, data?, message? }
 ```
